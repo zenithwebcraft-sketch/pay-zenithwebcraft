@@ -1,0 +1,16 @@
+@import "tailwindcss";
+
+@theme {
+  --color-zenith-dark: #0a0a0f;
+  --color-zenith-card: #111118;
+  --color-zenith-border: #1e1e2e;
+  --color-zenith-accent: #6c63ff;
+  --color-zenith-text: #e2e8f0;
+  --color-zenith-muted: #64748b;
+}
+
+body {
+  background-color: var(--color-zenith-dark);
+  color: var(--color-zenith-text);
+  font-family: 'Inter', sans-serif;
+}
