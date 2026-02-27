@@ -20,7 +20,7 @@ export default function AdminLogin() {
       navigate("/admin");
     } catch (err) {
       console.error("Firebase error:", err);
-      setError("Credenciales incorrectas. Verifica tu email y contraseña.");
+      setError("Credenciales incorrectas. Por favor verifica tu email y contraseña.");
     } finally {
       setLoading(false);
     }
