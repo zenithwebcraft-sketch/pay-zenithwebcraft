@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 
-const PAYPAL_API = "https://api-m.sandbox.paypal.com"; // Live
+const PAYPAL_API = "https://api-m.paypal.com"; // Live
 // Para pruebas: "https://api-m.sandbox.paypal.com"
 
 async function getPayPalToken(): Promise<string> {

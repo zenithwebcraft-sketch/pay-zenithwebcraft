@@ -13,7 +13,7 @@ if (!getApps().length) {
 }
 
 const db = getFirestore();
-const PAYPAL_API = "https://api-m.sandbox.paypal.com";
+const PAYPAL_API = "https://api-m.paypal.com";
 
 async function getPayPalToken(): Promise<string> {
   const credentials = Buffer.from(
