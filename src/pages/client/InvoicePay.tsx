@@ -5,6 +5,7 @@ import { db } from "@/lib/firebase";
 import type { Invoice } from "@/types";
 import InvoiceSummary from "@/components/checkout/InvoiceSummary";
 import StripeCheckout from "@/components/checkout/StripeCheckout";
+import PayPalCheckout from "@/components/checkout/PayPalCheckout";
 
 type Tab = "card" | "paypal";
 
@@ -139,10 +140,12 @@ export default function InvoicePay() {
           )}
 
           {/* PayPal — placeholder hasta Fase 3 */}
-          {tab === "paypal" && (
-            <div className="text-center py-8">
-              <p className="text-zenith-muted text-sm">PayPal coming soon</p>
-            </div>
+          {tab === "paypal" && invoice && (
+            <PayPalCheckout
+              amount={invoice.total}
+              invoiceId={invoice.id!}
+              customerEmail={invoice.customerEmail}
+            />
           )}
 
         </div>
