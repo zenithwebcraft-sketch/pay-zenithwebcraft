@@ -1,7 +1,19 @@
 import AdminLayout from "../../components/admin/AdminLayout";
 import { useDashboardData } from "../../hooks/useDashboardData";
 import { useNavigate } from "react-router-dom";
+// Agrega este import al inicio del archivo
+import { doc, updateDoc, deleteDoc } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 
+const handleCancel = async (invoiceId: string) => {
+    if (!confirm("¿Cancelar esta factura?")) return;
+    await updateDoc(doc(db, "invoices", invoiceId), { status: "cancelled" });
+};
+
+const handleDelete = async (invoiceId: string) => {
+    if (!confirm("¿Eliminar permanentemente esta factura? Esta acción no se puede deshacer.")) return;
+    await deleteDoc(doc(db, "invoices", invoiceId));
+};
 function StatusBadge({ status }: { status: string }) {
   const styles: Record<string, string> = {
     paid:      "bg-green-500/10 text-green-400 border-green-500/20",
@@ -11,6 +23,7 @@ function StatusBadge({ status }: { status: string }) {
     active:    "bg-green-500/10 text-green-400 border-green-500/20",
     paused:    "bg-yellow-500/10 text-yellow-400 border-yellow-500/20",
   };
+
   return (
     <span className={`text-xs font-medium px-2.5 py-1 rounded-full border ${styles[status] ?? styles.pending}`}>
       {status}
@@ -86,19 +99,45 @@ export default function Dashboard() {
                     <p className="text-white text-sm font-medium">{inv.customerName}</p>
                     <p className="text-zenith-muted text-xs">{inv.customerEmail}</p>
                   </div>
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-3">
                     <span className="text-white font-semibold">${inv.total.toLocaleString()}</span>
                     <StatusBadge status={inv.status} />
-                    <button
-                      onClick={() => {
-                        navigator.clipboard.writeText(`${window.location.origin}/invoice/${inv.id}`);
-                        alert("Link copiado al portapapeles ✅");
-                      }}
-                      className="text-zenith-muted hover:text-zenith-accent text-xs transition"
-                      title="Copiar link de pago"
-                    >
-                      🔗
-                    </button>
+
+                    {/* Copiar link — solo si está pendiente */}
+                    {inv.status === "pending" && (
+                      <button
+                        onClick={() => {
+                          navigator.clipboard.writeText(`${window.location.origin}/invoice/${inv.id}`);
+                          alert("Link copiado al portapapeles ✅");
+                        }}
+                        className="text-zenith-muted hover:text-zenith-accent text-xs transition"
+                        title="Copiar link de pago"
+                      >
+                        🔗
+                      </button>
+                    )}
+
+                    {/* Cancelar — solo si está pendiente */}
+                    {inv.status === "pending" && (
+                      <button
+                        onClick={() => handleCancel(inv.id!)}
+                        className="text-zenith-muted hover:text-yellow-400 text-xs transition"
+                        title="Cancelar factura"
+                      >
+                        ✕
+                      </button>
+                    )}
+
+                    {/* Eliminar — solo si está cancelada o fallida */}
+                    {(inv.status === "cancelled" || inv.status === "failed") && (
+                      <button
+                        onClick={() => handleDelete(inv.id!)}
+                        className="text-zenith-muted hover:text-red-400 text-xs transition"
+                        title="Eliminar factura"
+                      >
+                        🗑️
+                      </button>
+                    )}
                   </div>
                 </div>
               ))}
